@@ -3,6 +3,7 @@ import { fetchLiteLLMModels, validateLiteLLMApiKey } from "./litellm.ts";
 import { fetchLlamaCppModels } from "./llamacpp.ts";
 import { fetchLMStudioModels } from "./lmstudio.ts";
 import { fetchNanoGPTModels, validateNanoGPTApiKey } from "./nanogpt.ts";
+import { fetchNineRouterModels, validateNineRouterApiKey } from "./ninerouter.ts";
 import { fetchOllamaModels } from "./ollama.ts";
 import { fetchOmniRouteModels, validateOmniRouteApiKey } from "./omniroute.ts";
 import type { OpenRouterModelMeta } from "./openrouter.ts";
@@ -41,6 +42,7 @@ const API_KEY_VALIDATION_PROVIDERS = new Set([
 	"nanogpt",
 	"litellm",
 	"omniroute",
+	"9router",
 ]);
 const MODEL_FETCHING_PROVIDERS = new Set([
 	"openrouter",
@@ -51,6 +53,7 @@ const MODEL_FETCHING_PROVIDERS = new Set([
 	"llamacpp",
 	"litellm",
 	"omniroute",
+	"9router",
 ]);
 
 export function hasApiModelFetching(templateId: string): boolean {
@@ -99,6 +102,11 @@ export async function fetchApiModels(
 			if (!baseUrl) return { ok: false, error: "unknown" };
 			return fetchOmniRouteModels(baseUrl, apiKey);
 		}
+		case "9router": {
+			const baseUrl = customBaseUrl || getTemplate(templateId)?.baseUrl;
+			if (!baseUrl) return { ok: false, error: "unknown" };
+			return fetchNineRouterModels(baseUrl, apiKey);
+		}
 		case "ollama":
 		case "lmstudio":
 		case "llamacpp": {
@@ -134,6 +142,11 @@ export async function validateApiKey(
 			const baseUrl = customBaseUrl || getTemplate(templateId)?.baseUrl;
 			if (!baseUrl) return { valid: false, error: "unknown" };
 			return validateOmniRouteApiKey(baseUrl, apiKey);
+		}
+		case "9router": {
+			const baseUrl = customBaseUrl || getTemplate(templateId)?.baseUrl;
+			if (!baseUrl) return { valid: false, error: "unknown" };
+			return validateNineRouterApiKey(baseUrl, apiKey);
 		}
 		default:
 			return { valid: false, error: "unknown" };

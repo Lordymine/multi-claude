@@ -276,6 +276,17 @@ export const PROVIDER_TEMPLATES: ProviderTemplate[] = [
 			CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC: "1",
 		},
 	},
+	{
+		// https://github.com/decolua/9router
+		id: "9router",
+		description: "9Router",
+		baseUrl: "http://localhost:20128/v1",
+		defaultModels: [],
+		defaultApiKey: "9router",
+		env: {
+			CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC: "1",
+		},
+	},
 ];
 
 export function getTemplate(id: string): ProviderTemplate | undefined {

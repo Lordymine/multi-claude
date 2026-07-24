@@ -39,6 +39,8 @@ src/
 │   ├── llamacpp.ts     # Integracao llama.cpp
 │   ├── litellm.ts      # Integracao LiteLLM Proxy
 │   ├── nanogpt.ts      # Integracao NanoGPT
+│   ├── ninerouter.ts   # Integracao 9Router
+│   ├── omniroute.ts    # Integracao OmniRoute
 │   └── version-check.ts # Verificacao de atualizacoes
 ├── i18n/
 │   ├── index.ts        # Setup do i18n (rosetta)

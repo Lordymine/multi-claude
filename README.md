@@ -8,7 +8,7 @@ Quer ir além de prompts e dominar a **Engenharia de Contexto** — a habilidade
 
 <div align="center">
 
-[![Version](https://img.shields.io/badge/version-1.0.33-blue)](https://github.com/leogomide/multi-claude/releases)
+[![Version](https://img.shields.io/badge/version-1.0.34-blue)](https://github.com/leogomide/multi-claude/releases)
 [![License](https://img.shields.io/badge/license-MIT-green)](./LICENSE)
 [![NPM](https://img.shields.io/badge/npm-%40leogomide%2Fmulti--claude-red)](https://www.npmjs.com/package/@leogomide/multi-claude)
 [![Bun](https://img.shields.io/badge/runtime-Bun-ffcf2d)](https://bun.sh)
@@ -376,6 +376,17 @@ These providers run locally on your machine — no API key is required (a placeh
 
 Self-hosted AI gateway with Anthropic API support. Run OmniRoute separately, then add it as a provider in multi-claude.
 
+#### 9Router
+
+- **Docs:** [9Router on GitHub](https://github.com/decolua/9router)
+- **Base URL:** `http://localhost:20128/v1` (configurable)
+- **API key:** Optional — copy it from the 9Router dashboard if you enabled `requireApiKey`
+- **Default models:** None — fetched from `/v1/models`, depending on the providers you connected in the 9Router dashboard
+
+Local proxy that routes requests to 40+ AI providers with automatic fallback, OpenAI ↔ Claude format translation, and token savings. Install it with `npm install -g 9router`, run `9router`, connect at least one provider in the dashboard at `http://localhost:20128`, then add it as a provider in multi-claude. Model ids are namespaced by source (`cc/`, `kr/`, `glm/`, `oc/`, `vertex/`, ...).
+
+> 9Router and OmniRoute both default to port `20128`. If you use both, change the base URL of one of them when adding the provider.
+
 ## Provider Management
 
 All provider management is done inside the TUI. From the main menu, select **Manage providers** to:
@@ -547,7 +558,11 @@ Color-coded indicators change from green to yellow to red based on context usage
 
 ## Changelog
 
-### v1.0.33 (current)
+### v1.0.34 (current)
+
+- **feat:** added 9Router as a local provider — self-hosted proxy for 40+ AI providers, with models fetched automatically from the local instance
+
+### v1.0.33
 
 - **feat:** new `Load .env variables` option in the launch screen — reads `.env` from the current directory and injects its variables into Claude Code (empty values are skipped; precedence is `.env` < provider < user-selected)
 - **refactor:** removed the experimental `No Flicker` option from the launch screen
