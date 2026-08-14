@@ -180,25 +180,14 @@ export const PROVIDER_TEMPLATES: ProviderTemplate[] = [
 	{
 		// https://docs.z.ai/devpack/tool/claude#manual-configuration
 		id: "zai",
-		description: "Z.AI",
+		description: "Z.AI Coding Plan",
+		// Coding Plan endpoint, distinct from the pay-as-you-go API (api.z.ai/api/paas/v4)
 		baseUrl: "https://api.z.ai/api/anthropic",
-		defaultModels: [
-			"GLM-5.1",
-			"GLM-5",
-			"GLM-5-Turbo",
-			"GLM-4.7",
-			"GLM-4.7-FlashX",
-			"GLM-4.6",
-			"GLM-4.5",
-			"GLM-4.5-X",
-			"GLM-4.5-Air",
-			"GLM-4.5-AirX",
-			"GLM-4-32B-0414-128K",
-			"GLM-4.7-Flash",
-			"GLM-4.5-Flash",
-		],
+		defaultModels: ["GLM-5.3", "GLM-5-Turbo", "GLM-4.7"],
 		env: {
 			API_TIMEOUT_MS: "3000000",
+			CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC: "1",
+			CLAUDE_CODE_AUTO_COMPACT_WINDOW: "1000000",
 		},
 	},
 	{
