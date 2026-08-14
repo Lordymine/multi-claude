@@ -8,7 +8,7 @@ Quer ir além de prompts e dominar a **Engenharia de Contexto** — a habilidade
 
 <div align="center">
 
-[![Version](https://img.shields.io/badge/version-1.0.34-blue)](https://github.com/leogomide/multi-claude/releases)
+[![Version](https://img.shields.io/badge/version-1.0.35-blue)](https://github.com/leogomide/multi-claude/releases)
 [![License](https://img.shields.io/badge/license-MIT-green)](./LICENSE)
 [![NPM](https://img.shields.io/badge/npm-%40leogomide%2Fmulti--claude-red)](https://www.npmjs.com/package/@leogomide/multi-claude)
 [![Bun](https://img.shields.io/badge/runtime-Bun-ffcf2d)](https://bun.sh)
@@ -558,7 +558,13 @@ Color-coded indicators change from green to yellow to red based on context usage
 
 ## Changelog
 
-### v1.0.34 (current)
+### v1.0.35 (current)
+
+- **fix:** updated the Z.AI provider to the current GLM Coding Plan lineup — `GLM-5.3`, `GLM-5-Turbo` and `GLM-4.7`, dropping the discontinued GLM-4.5/4.6 models
+- **fix:** the Z.AI provider now sets `CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC` and `CLAUDE_CODE_AUTO_COMPACT_WINDOW`, as recommended by Z.AI's official configuration
+- **refactor:** renamed the Z.AI provider to `Z.AI Coding Plan`, making it explicit that it targets the Coding Plan endpoint rather than the pay-as-you-go API
+
+### v1.0.34
 
 - **feat:** added 9Router as a local provider — self-hosted proxy for 40+ AI providers, with models fetched automatically from the local instance
 
