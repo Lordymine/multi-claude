@@ -55,6 +55,7 @@ interface StartClaudeFlowProps {
 		selectedFlags: string[];
 		selectedEnvVars?: Record<string, string>;
 		loadDotenv?: boolean;
+		contextWindowTokens?: number;
 	}) => void;
 	onOAuthLogin: (result: { providerId: string; providerName: string; isNew: boolean }) => void;
 	onCancel: () => void;
@@ -365,6 +366,8 @@ export function StartClaudeFlow({
 				}
 			}
 		}
+		const contextWindowTokens = modelItems.find((m) => m.name === selectedModel)?.meta
+			?.context_length;
 		onComplete({
 			provider: selectedProvider,
 			model: selectedModel,
@@ -372,6 +375,7 @@ export function StartClaudeFlow({
 			selectedFlags: flags,
 			selectedEnvVars: Object.keys(envVars).length > 0 ? envVars : undefined,
 			loadDotenv: loadDotenv || undefined,
+			contextWindowTokens,
 		});
 	};
 

@@ -302,6 +302,7 @@ const PRESERVED_CLAUDE_CODE_VARS = new Set([
 	"CLAUDE_CODE_GIT_BASH_PATH", // Bash path on Windows
 	"CLAUDE_CODE_SHELL", // Shell override
 	"CLAUDE_CODE_TMPDIR", // Temp directory override
+	"CLAUDE_CODE_MAX_CONTEXT_TOKENS", // Context window hint for third-party models
 ]);
 
 /** Remove all CLAUDECODE/CLAUDE_CODE env vars except essential ones. */
@@ -340,6 +341,7 @@ export function buildClaudeEnv(
 	provider: ConfiguredProvider,
 	model: string,
 	installationId?: string,
+	contextWindowTokens?: number,
 ): Record<string, string> | null {
 	const template = getTemplate(provider.templateId);
 	if (!template) return null;
@@ -397,6 +399,11 @@ export function buildClaudeEnv(
 
 	// Common: set model env vars (must come AFTER cleanup + re-apply)
 	setModelEnvVars(env, model);
+
+	// Claude Code defaults unknown models to a 200k context window; pass the real one when known.
+	if (contextWindowTokens && contextWindowTokens > 0 && !env["CLAUDE_CODE_MAX_CONTEXT_TOKENS"]) {
+		env["CLAUDE_CODE_MAX_CONTEXT_TOKENS"] = String(contextWindowTokens);
+	}
 
 	// Set installation dir for custom installations
 	if (installationId && installationId !== DEFAULT_INSTALLATION_ID) {
