@@ -560,6 +560,7 @@ Color-coded indicators change from green to yellow to red based on context usage
 
 ### v1.0.35 (current)
 
+- **fix:** confirming with Enter right after an arrow key no longer selects the item above the highlighted one, in the main menu, the model list and the launch options
 - **fix:** updated the Z.AI provider to the current GLM Coding Plan lineup — `GLM-5.3`, `GLM-5-Turbo` and `GLM-4.7`, dropping the discontinued GLM-4.5/4.6 models
 - **fix:** the Z.AI provider now sets `CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC` and `CLAUDE_CODE_AUTO_COMPACT_WINDOW`, as recommended by Z.AI's official configuration
 - **refactor:** renamed the Z.AI provider to `Z.AI Coding Plan`, making it explicit that it targets the Coding Plan endpoint rather than the pay-as-you-go API

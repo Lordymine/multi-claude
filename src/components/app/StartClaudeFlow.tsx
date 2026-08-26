@@ -1,7 +1,7 @@
 import { Spinner } from "@inkjs/ui";
 import { Box, Text, useInput } from "ink";
 import TextInput from "ink-text-input";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import {
 	getInstallationPath,
 	isAccountAuthenticated,
@@ -379,6 +379,38 @@ export function StartClaudeFlow({
 		});
 	};
 
+	// Ink re-subscribes useInput via an effect, so the handler can be the one from the
+	// previous render. These refs keep input handling on the current values instead.
+	const activeIndexRef = useRef(0);
+	const filteredItemsRef = useRef(filteredItems);
+	const installationActiveIndexRef = useRef(0);
+	const installationListItemsRef = useRef(installationListItems);
+	useLayoutEffect(() => {
+		activeIndexRef.current = activeIndex;
+		filteredItemsRef.current = filteredItems;
+		installationActiveIndexRef.current = installationActiveIndex;
+		installationListItemsRef.current = installationListItems;
+	});
+
+	const clampMove = (current: number, delta: number, count: number) =>
+		Math.max(0, Math.min(count - 1, current + delta));
+
+	const moveModelActive = (delta: number) => {
+		const next = clampMove(activeIndexRef.current, delta, filteredItemsRef.current.length);
+		activeIndexRef.current = next;
+		setActiveIndex(next);
+	};
+
+	const moveInstallationActive = (delta: number) => {
+		const next = clampMove(
+			installationActiveIndexRef.current,
+			delta,
+			installationListItemsRef.current.length,
+		);
+		installationActiveIndexRef.current = next;
+		setInstallationActiveIndex(next);
+	};
+
 	useInput((input, key) => {
 		if (step === "select-options") return; // ChecklistSelect handles its own input
 
@@ -408,11 +440,11 @@ export function StartClaudeFlow({
 		}
 		if (step === "select-installation") {
 			if (key.upArrow) {
-				setInstallationActiveIndex((prev) => Math.max(0, prev - 1));
+				moveInstallationActive(-1);
 			} else if (key.downArrow) {
-				setInstallationActiveIndex((prev) => Math.min(installationListItems.length - 1, prev + 1));
+				moveInstallationActive(1);
 			} else if (key.return && selectedProvider) {
-				const item = installationListItems[installationActiveIndex];
+				const item = installationListItemsRef.current[installationActiveIndexRef.current];
 				if (item) {
 					goToFlagsStep(selectedProvider, selectedModel, item.id);
 				}
@@ -420,11 +452,11 @@ export function StartClaudeFlow({
 			return;
 		}
 		if (key.upArrow) {
-			setActiveIndex((prev) => Math.max(0, prev - 1));
+			moveModelActive(-1);
 		} else if (key.downArrow) {
-			setActiveIndex((prev) => Math.min(filteredItems.length - 1, prev + 1));
+			moveModelActive(1);
 		} else if (key.return) {
-			const item = filteredItems[activeIndex];
+			const item = filteredItemsRef.current[activeIndexRef.current];
 			if (item && selectedProvider) {
 				goToInstallationOrComplete(selectedProvider, item.name);
 			}
@@ -433,6 +465,7 @@ export function StartClaudeFlow({
 
 	// Reset index when search query changes
 	useEffect(() => {
+		activeIndexRef.current = 0;
 		setActiveIndex(0);
 	}, [query]);
 
