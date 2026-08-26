@@ -235,7 +235,7 @@ describe("Smoke Test — TUI Flows", () => {
 		expect(frame).toContain("Select a model");
 		expect(frame).toContain("Claude 3.5 Sonnet"); // API-only model, shown by display name
 		// The saved model "openai/gpt-4o" is also returned by the API, so the API entry
-		// supersedes it: one row, display name, with metadata -- not the bare id twice.
+		// supersedes it: one row, display name, with metadata — not the bare id twice.
 		expect(frame).toContain("GPT-4o");
 		expect(frame).not.toContain("openai/gpt-4o");
 	}, 10000);

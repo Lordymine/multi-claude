@@ -1,4 +1,4 @@
-import { getTemplate } from "../providers.ts";
+import { getModelSpec, getTemplate } from "../providers.ts";
 import { fetchLiteLLMModels, validateLiteLLMApiKey } from "./litellm.ts";
 import { fetchLlamaCppModels } from "./llamacpp.ts";
 import { fetchLMStudioModels } from "./lmstudio.ts";
@@ -80,7 +80,33 @@ function mapOpenRouterModel(m: OpenRouterModelMeta): ApiModelMeta {
 	};
 }
 
+function fillFromTemplate(templateId: string, result: ApiFetchResult): ApiFetchResult {
+	if (!result.ok) return result;
+	return {
+		ok: true,
+		models: result.models.map((m) => {
+			// The API is authoritative; the table only fills what it left out.
+			if (m.context_length !== undefined) return m;
+			const spec = getModelSpec(templateId, m.id);
+			if (!spec) return m;
+			return {
+				...m,
+				context_length: spec.context,
+				max_output_tokens: m.max_output_tokens ?? spec.maxOutput,
+			};
+		}),
+	};
+}
+
 export async function fetchApiModels(
+	templateId: string,
+	apiKey: string,
+	customBaseUrl?: string,
+): Promise<ApiFetchResult> {
+	return fillFromTemplate(templateId, await fetchRaw(templateId, apiKey, customBaseUrl));
+}
+
+async function fetchRaw(
 	templateId: string,
 	apiKey: string,
 	customBaseUrl?: string,
