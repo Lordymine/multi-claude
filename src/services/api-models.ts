@@ -9,6 +9,7 @@ import { fetchOmniRouteModels, validateOmniRouteApiKey } from "./omniroute.ts";
 import type { OpenRouterModelMeta } from "./openrouter.ts";
 import { fetchOpenRouterModels, validateOpenRouterApiKey } from "./openrouter.ts";
 import { fetchRequestyModels, validateRequestyApiKey } from "./requesty.ts";
+import { fetchZaiModels, validateZaiApiKey } from "./zai.ts";
 
 export interface ApiModelMeta {
 	id: string;
@@ -43,6 +44,7 @@ const API_KEY_VALIDATION_PROVIDERS = new Set([
 	"litellm",
 	"omniroute",
 	"9router",
+	"zai",
 ]);
 const MODEL_FETCHING_PROVIDERS = new Set([
 	"openrouter",
@@ -54,6 +56,7 @@ const MODEL_FETCHING_PROVIDERS = new Set([
 	"litellm",
 	"omniroute",
 	"9router",
+	"zai",
 ]);
 
 export function hasApiModelFetching(templateId: string): boolean {
@@ -107,6 +110,11 @@ export async function fetchApiModels(
 			if (!baseUrl) return { ok: false, error: "unknown" };
 			return fetchNineRouterModels(baseUrl, apiKey);
 		}
+		case "zai": {
+			const baseUrl = customBaseUrl || getTemplate(templateId)?.baseUrl;
+			if (!baseUrl) return { ok: false, error: "unknown" };
+			return fetchZaiModels(baseUrl, apiKey);
+		}
 		case "ollama":
 		case "lmstudio":
 		case "llamacpp": {
@@ -147,6 +155,11 @@ export async function validateApiKey(
 			const baseUrl = customBaseUrl || getTemplate(templateId)?.baseUrl;
 			if (!baseUrl) return { valid: false, error: "unknown" };
 			return validateNineRouterApiKey(baseUrl, apiKey);
+		}
+		case "zai": {
+			const baseUrl = customBaseUrl || getTemplate(templateId)?.baseUrl;
+			if (!baseUrl) return { valid: false, error: "unknown" };
+			return validateZaiApiKey(baseUrl, apiKey);
 		}
 		default:
 			return { valid: false, error: "unknown" };

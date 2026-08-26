@@ -96,6 +96,7 @@ export function StartClaudeFlow({
 	const [activeIndex, setActiveIndex] = useState(0);
 	const [query, setQuery] = useState("");
 	const [fetchError, setFetchError] = useState<ApiModelError | null>(null);
+	const [fallbackError, setFallbackError] = useState<ApiModelError | null>(null);
 	const [installations, setInstallations] = useState<Installation[]>([]);
 	const [selectedModel, setSelectedModel] = useState<string>("");
 	const [installationActiveIndex, setInstallationActiveIndex] = useState(0);
@@ -195,25 +196,35 @@ export function StartClaudeFlow({
 	const loadModelsForProvider = async (provider: ConfiguredProvider) => {
 		if (hasApiModelFetching(provider.templateId)) {
 			setStep("loading-models");
+			setFallbackError(null);
 			const result = await fetchApiModels(
 				provider.templateId,
 				provider.apiKey,
 				getProviderBaseUrl(provider),
 			);
 
+			const effective = getEffectiveModelsWithSource(provider);
+
 			if (!result.ok) {
+				// Falling back to the local list beats a dead-end error screen.
+				if (effective.length > 0) {
+					setFallbackError(result.error);
+					setModelItems(effective);
+					setStep("select-model");
+					return;
+				}
 				setFetchError(result.error);
 				setStep("error");
 				return;
 			}
 
-			const apiModels = result.models;
-			const effective = getEffectiveModelsWithSource(provider);
-			const effectiveNames = new Set(effective.map((m) => m.name));
-			const apiOnly = apiModels
-				.filter((meta) => !effectiveNames.has(meta.id))
-				.map((meta): ModelWithSource => ({ name: meta.id, source: "api", meta }));
-			const all = [...effective, ...apiOnly];
+			// The API list is canonical: it carries the real model id plus metadata.
+			const apiIds = new Set(result.models.map((m) => m.id.toLowerCase()));
+			const localOnly = effective.filter((m) => !apiIds.has(m.name.toLowerCase()));
+			const apiItems = result.models.map(
+				(meta): ModelWithSource => ({ name: meta.id, source: "api", meta }),
+			);
+			const all = [...localOnly, ...apiItems];
 
 			if (all.length === 0) {
 				setStep("no-models");
@@ -719,6 +730,11 @@ export function StartClaudeFlow({
 				<StatusMessage variant="info">
 					{t("selector.providerLabel")}: {selectedProvider.name}
 				</StatusMessage>
+				{fallbackError && (
+					<StatusMessage variant="warning">
+						{t("apiModels.fallbackNotice", { provider: providerLabel })}
+					</StatusMessage>
+				)}
 				<Text bold color="cyan">
 					{t("selector.selectModel")}
 				</Text>

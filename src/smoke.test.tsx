@@ -233,8 +233,11 @@ describe("Smoke Test — TUI Flows", () => {
 		const frame = lastFrame()!;
 		expect(frame).toContain("My OpenRouter");
 		expect(frame).toContain("Select a model");
-		expect(frame).toContain("openai/gpt-4o"); // user model (no meta, shows ID)
-		expect(frame).toContain("Claude 3.5 Sonnet"); // API model (has meta, shows name)
+		expect(frame).toContain("Claude 3.5 Sonnet"); // API-only model, shown by display name
+		// The saved model "openai/gpt-4o" is also returned by the API, so the API entry
+		// supersedes it: one row, display name, with metadata -- not the bare id twice.
+		expect(frame).toContain("GPT-4o");
+		expect(frame).not.toContain("openai/gpt-4o");
 	}, 10000);
 
 	// Regression: Ink re-subscribes useInput through an effect, so the handler could be
@@ -281,12 +284,12 @@ describe("Smoke Test — TUI Flows", () => {
 		await navigateAndSelect(stdin, 2); // My OpenRouter
 		await waitForFrame(lastFrame, "Select a model");
 
-		// Models are sorted by display name: Claude 3.5 Sonnet(0), openai/gpt-4o(1)
+		// Models are sorted by display name: Claude 3.5 Sonnet(0), GPT-4o(1)
 		await pressKey(stdin, KEYS.DOWN, 20);
 		const highlighted = lastFrame()!
 			.split("\n")
 			.find((l) => l.includes("❯"));
-		expect(highlighted).toContain("openai/gpt-4o");
+		expect(highlighted).toContain("GPT-4o");
 
 		await pressKey(stdin, KEYS.ENTER, 250);
 
